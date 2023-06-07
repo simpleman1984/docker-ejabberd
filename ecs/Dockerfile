@@ -8,18 +8,24 @@ LABEL maintainer="ProcessOne <contact@process-one.net>" \
 ENV HTTP_PROXY="http://192.168.2.244:1080"
 ENV HTTPS_PROXY="http://192.168.2.244:1080"
 
+# 从远程下载源码，当场编译
 # Get ejabberd sources, dependencies, configuration
-#RUN git clone https://github.com/processone/ejabberd.git
-RUN git config --global http.proxy http://192.168.2.244:1080 && \
-    git clone https://github.com/githubraphael/ejabberd.git
+# RUN git clone https://github.com/processone/ejabberd.git
+# RUN git config --global http.proxy http://192.168.2.244:1080 && \
+#     git clone https://github.com/githubraphael/ejabberd.git
+
+# 直接拷贝本地的，远程的太慢了
+COPY ejabberd /ejabberd
 
 WORKDIR /ejabberd
 COPY vars.config .
 RUN echo '{vsn, "'${VERSION}'.0"}.' >>vars.config
 COPY config.exs config/
 COPY rel/*exs rel/
-RUN git checkout ${VERSION/latest/HEAD} \
-    && mix deps.get \
+# RUN git checkout ${VERSION/latest/HEAD} \
+#     && mix deps.get \
+#     && (cd deps/eimp; ./configure)
+RUN mix deps.get \
     && (cd deps/eimp; ./configure)
 
 # Compile

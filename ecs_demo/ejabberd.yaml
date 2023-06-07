@@ -20,9 +20,9 @@ hosts:
 loglevel: info
 
 ## If you already have certificates, list them here
-ca_file: /data/ejabberd/_build/relive//conf//ca.pem
-certfiles:
-  - /data/ejabberd/_build/relive//conf//cert.pem
+# ca_file: /data/ejabberd/_build/relive//conf//ca.pem
+# certfiles:
+#   - /data/ejabberd/_build/relive//conf//cert.pem
 #  - /etc/letsencrypt/live/domain.tld/fullchain.pem
 #  - /etc/letsencrypt/live/domain.tld/privkey.pem
 
