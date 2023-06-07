@@ -5,8 +5,14 @@ ENV VERSION=${VERSION:-latest} \
 LABEL maintainer="ProcessOne <contact@process-one.net>" \
     product="Ejabberd Community Server builder"
 
+ENV HTTP_PROXY="http://192.168.2.244:1080"
+ENV HTTPS_PROXY="http://192.168.2.244:1080"
+
 # Get ejabberd sources, dependencies, configuration
-RUN git clone https://github.com/processone/ejabberd.git
+#RUN git clone https://github.com/processone/ejabberd.git
+RUN git config --global http.proxy http://192.168.2.244:1080 && \
+    git clone https://github.com/githubraphael/ejabberd.git
+
 WORKDIR /ejabberd
 COPY vars.config .
 RUN echo '{vsn, "'${VERSION}'.0"}.' >>vars.config
@@ -67,6 +73,9 @@ RUN addgroup ejabberd -g 9000 \
     && mkdir -p /home/ejabberd/conf /home/ejabberd/database /home/ejabberd/logs /home/ejabberd/upload \
     && chown -R ejabberd:ejabberd /home/ejabberd
 
+# 加速
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
 # Install required dependencies
 RUN apk upgrade --update-cache --no-progress \
     && apk add \
@@ -79,6 +88,7 @@ RUN apk upgrade --update-cache --no-progress \
     libstdc++ \
     libwebp \
     ncurses-libs \
+    openssl-dev \
     openssl \
     sqlite \
     sqlite-libs \
